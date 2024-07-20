@@ -39,7 +39,7 @@ class ProfileController extends Controller
             $user->profile_picture = $path;
         }
         $user->save();
-        return redirect()->route('profile')->with('success', 'Profile updated successfully.');
+        return redirect()->route('profile');
     }
 
     public function destroy(Request $request)
@@ -52,6 +52,6 @@ class ProfileController extends Controller
             $user->delete();
         });
         Auth::logout();
-        return redirect('/')->with('success', 'Your account has been deleted.');
+        return redirect('/');
     }
 }
