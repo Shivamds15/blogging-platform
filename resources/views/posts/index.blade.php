@@ -68,6 +68,11 @@
                     @endforelse
                 </div>
             @endif
+
+            <div class="mt-4" id="Pagination-Navpost">
+                {{ $posts->links() }}
+            </div>
+            
         </div>
     </div>
 </div>

@@ -215,6 +215,24 @@ body {
     color: #fff;
 }
 
+#Pagination-Navpost div span{
+    display: inline-flex;
+}
+
+#Pagination-Navpost div span a svg{
+    width: 20px
+}
+
+#Pagination-Navpost nav div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#Pagination-Navpost nav > div:first-of-type{
+    display: none;
+}
+
 div.commbody {
     display: flex;
     justify-content: space-between;
