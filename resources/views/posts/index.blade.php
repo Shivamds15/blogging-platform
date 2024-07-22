@@ -9,7 +9,6 @@
             <span class="row d-flex px-3 justify-content-between">
                 <h2 class="mb-0">Posts</h2>
                 <div>
-                    <!-- Buttons to toggle between all posts and user-specific posts -->
                     @auth
                         <a href="{{ route('posts.index') }}" class="btn btn-info mx-2 {{ !request('user_posts') ? 'active' : '' }}">All Posts</a>
                         <a href="{{ route('posts.index', ['user_posts' => 'true']) }}" class="btn btn-info mx-2 {{ request('user_posts') ? 'active' : '' }}">My Posts</a>
@@ -19,7 +18,6 @@
             </span>
         </div>
         <div class="card-body">
-            <!-- Active Posts -->
             <h3>Active Posts</h3>
             <div id="active-posts">
                 @forelse ($posts->whereNull('deleted_at') as $post)
@@ -28,7 +26,7 @@
                             <a href="{{ route('posts.show', $post) }}" class="text-decoration-none text-primary">{{ $post->title }}</a>
                         </h3>
                         <p class="post-body">{{ Str::limit($post->body, 150) }}</p>
-                        <p class="text-muted">Posted by: {{ $post->user->name }} | Comments: {{ $post->comments->count() }}</p>
+                        <p class="text-muted">Posted by: {{ $post->user->name }} | Comments: {{ $post->comments->count() }} | Created on: {{ $post->created_at->format('d M Y, H:i') }}</p>
                         
                         @auth
                             @if(request('user_posts') && $post->user_id === Auth::id())
@@ -46,7 +44,6 @@
                 @endforelse
             </div>
 
-            <!-- Soft-Deleted Posts -->
             @if(request('user_posts'))
                 <h3 class="mt-5">Deleted Posts</h3>
                 <div id="deleted-posts">

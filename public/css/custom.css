@@ -215,6 +215,12 @@ body {
     color: #fff;
 }
 
+div.commbody {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .btn.w-100 {
     width: 100%;
 }

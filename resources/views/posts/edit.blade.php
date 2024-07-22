@@ -1,4 +1,3 @@
-<!-- resources/views/posts/edit.blade.php -->
 @extends('layouts.app')
 
 @section('title', 'Edit Post')
@@ -15,7 +14,7 @@
                     @csrf
                     @method('PUT')
                     <div class="form-group mb-3">
-                        <label for="title" class="form-label">{{ __('Title') }}</label>
+                        <label for="title" class="form-label">Title</label>
                         <input id="title" type="text" name="title" class="form-control @error('title') is-invalid @enderror" value="{{ old('title', $post->title) }}" required>
                         @error('title')
                             <div class="invalid-feedback">
@@ -24,7 +23,7 @@
                         @enderror
                     </div>
                     <div class="form-group mb-3">
-                        <label for="body" class="form-label">{{ __('Body') }}</label>
+                        <label for="body" class="form-label">Body</label>
                         <textarea id="body" name="body" class="form-control @error('body') is-invalid @enderror" rows="5" required>{{ old('body', $post->body) }}</textarea>
                         @error('body')
                             <div class="invalid-feedback">
@@ -32,9 +31,7 @@
                             </div>
                         @enderror
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">
-                        {{ __('Update Post') }}
-                    </button>
+                    <button type="submit" class="btn btn-primary w-100">Update Post</button>
                 </form>
             </div>
         </div>

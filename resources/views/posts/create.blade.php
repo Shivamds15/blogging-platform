@@ -13,7 +13,7 @@
                 <form method="POST" action="{{ route('posts.store') }}">
                     @csrf
                     <div class="form-group mb-3">
-                        <label for="title" class="form-label">{{ __('Title') }}</label>
+                        <label for="title" class="form-label">Title</label>
                         <input id="title" type="text" name="title" class="form-control @error('title') is-invalid @enderror" value="{{ old('title') }}" required>
                         @error('title')
                             <div class="invalid-feedback">
@@ -22,7 +22,7 @@
                         @enderror
                     </div>
                     <div class="form-group mb-3">
-                        <label for="body" class="form-label">{{ __('Body') }}</label>
+                        <label for="body" class="form-label">Body</label>
                         <textarea id="body" name="body" class="form-control @error('body') is-invalid @enderror" rows="5" required>{{ old('body') }}</textarea>
                         @error('body')
                             <div class="invalid-feedback">
@@ -30,9 +30,7 @@
                             </div>
                         @enderror
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">
-                        {{ __('Create Post') }}
-                    </button>
+                    <button type="submit" class="btn btn-primary w-100">Create Post</button>
                 </form>
             </div>
         </div>

@@ -12,7 +12,6 @@
             </div>
         @else
             <h1 class="welcome-message">Hello, {{ Auth::user()->name }}!</h1>
-            <p class="user-info">Email: {{ Auth::user()->email }}</p>
             <div class="login-buttons">
                 <a href="{{ route('posts.index') }}" class="btn-secondary">View Blog Posts</a>
                 <a href="{{ route('profile') }}" class="btn-secondary">View Profile</a>

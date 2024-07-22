@@ -57,7 +57,8 @@
                             </div>
 
                             <div class="text-center mt-3">
-                                <a href="{{ route('register') }}" class="text-muted">{{ __('Do not have an account? Register') }}</a>
+                                <a href="{{ route('register') }}" class="text-muted">{{ __('Do not have an account? Register') }}</a></br>
+                                    <a href="{{ route('password.request') }}" class="text-muted">{{ __('Forgot Password? Reset') }}</a>
                             </div>
 
                         </form>

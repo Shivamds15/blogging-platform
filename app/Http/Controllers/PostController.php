@@ -10,12 +10,13 @@ class PostController extends Controller
 {
     public function index(Request $request)
     {
+        $query = Post::withTrashed();
+
         if ($request->has('user_posts') && Auth::check()) {
-            $posts = Post::where('user_id', Auth::id())->withTrashed()->get();
-        } else {
-            $posts = Post::withTrashed()->get();
+            $query->where('user_id', Auth::id());
         }
 
+        $posts = $query->get();
         return view('posts.index', compact('posts'));
     }
 
@@ -26,15 +27,14 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'body' => 'required|string',
-        ]);
+        $this->validatePost($request);
+        
         Post::create([
             'title' => $request->title,
             'body' => $request->body,
             'user_id' => Auth::id(),
         ]);
+
         return redirect()->route('posts.index', ['user_posts' => 'true']);
     }
 
@@ -45,31 +45,22 @@ class PostController extends Controller
 
     public function edit(Post $post)
     {
-        if ($post->user_id !== Auth::id()) {
-            return redirect()->route('posts.index');
-        }
+        $this->authorizePost($post);
         return view('posts.edit', compact('post'));
     }
 
     public function update(Request $request, Post $post)
     {
-        if ($post->user_id !== Auth::id()) {
-            return redirect()->route('posts.index');
-        }
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'body' => 'required|string',
-        ]);
+        $this->authorizePost($post);
+        $this->validatePost($request);
+        
         $post->update($request->only(['title', 'body']));
         return redirect()->route('posts.index', ['user_posts' => 'true']);
     }
 
-    public function destroy($id)
+    public function destroy(Post $post)
     {
-        $post = Post::withTrashed()->findOrFail($id);
-        if ($post->user_id !== Auth::id()) {
-            return redirect()->route('posts.index');
-        }
+        $this->authorizePost($post);
         $post->delete();
         return redirect()->route('posts.index', ['user_posts' => 'true']);
     }
@@ -77,9 +68,7 @@ class PostController extends Controller
     public function restore($id)
     {
         $post = Post::withTrashed()->findOrFail($id);
-        if ($post->user_id !== Auth::id()) {
-            return redirect()->route('posts.index');
-        }
+        $this->authorizePost($post);
         $post->restore();
         return redirect()->route('posts.index', ['user_posts' => 'true']);
     }
@@ -87,10 +76,23 @@ class PostController extends Controller
     public function forceDelete($id)
     {
         $post = Post::withTrashed()->findOrFail($id);
+        $this->authorizePost($post);
+        $post->forceDelete();
+        return redirect()->route('posts.index', ['user_posts' => 'true']);
+    }
+
+    private function validatePost(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'body' => 'required|string',
+        ]);
+    }
+
+    private function authorizePost(Post $post)
+    {
         if ($post->user_id !== Auth::id()) {
             return redirect()->route('posts.index');
         }
-        $post->forceDelete();
-        return redirect()->route('posts.index', ['user_posts' => 'true']);
     }
 }

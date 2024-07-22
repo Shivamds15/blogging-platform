@@ -18,7 +18,7 @@
                         <form action="{{ route('posts.destroy', $post) }}" method="POST" style="display: inline;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <button type="submit" class="btn btn-primary btn-danger">Delete</button>
                         </form>
                     </div>
                 @endif
@@ -32,13 +32,16 @@
         </div>
         <div class="card-body">
             @foreach ($post->comments as $comment)
-                <div id="comment-{{ $comment->id }}" class="border-bottom mb-3 pb-2">
-                    <p>{{ $comment->body }}</p>
-                    <p class="text-muted"><small>by : {{ $comment->user->name }}</small></p>
-
+                <div id="comment-{{ $comment->id }}" class="border-bottom mb-3 pb-2 commbody">
+                    <div class="commLeft">
+                        <p>{{ $comment->body }}</p>
+                        <p class="text-muted"><small>by : {{ $comment->user->name }}</small></p>
+                    </div>
                     @auth
                         @if($comment->user_id === Auth::id())
-                            <button class="delete-comment-btn btn btn-danger btn-sm" data-id="{{ $comment->id }}">Delete</button>
+                    <div class="commright">
+                        <button class="delete-comment-btn btn btn-primary btn-danger btn-sm" data-id="{{ $comment->id }}">Delete</button>
+                    </div>
                         @endif
                     @endauth
                 </div>
