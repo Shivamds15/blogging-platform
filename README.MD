@@ -42,6 +42,7 @@ This is a Laravel-based blogging platform that provides users with the following
 - **Comment System**: Users can comment on posts and delete their own comments.
 - **Pagination**: Efficiently display posts with pagination.
 - **Profile Management**: Users can set a default profile image or upload a custom image.
+- **API Integration**: Fetch and manage data using API routes.
 
 ## Features
 
@@ -64,6 +65,11 @@ This is a Laravel-based blogging platform that provides users with the following
 
 - **Profile Management**:
   - Default profile image and the ability to upload a custom image.
+
+- **API Integration**:
+  - Fetch posts, comments, and users via API endpoints.
+  - Routes are defined for fetching posts (`get-posts`), comments (`get-comments`), and users (`get-users`).
+  - Ensure your API routes are secured and tested with tools like Postman.
 
 ## Installation
 
@@ -157,6 +163,7 @@ Open your browser and visit `http://localhost:8000` to view the application.
 5. **Manage Deleted Posts**: Access and restore soft-deleted posts if needed.
 6. **Comment on Posts**: Add comments to posts and delete your own comments.
 7. **Profile Management**: Set or update your profile image.
+8. **API Integration**: Use the defined API routes to fetch and manage data.
 
 ## Contributing
 
@@ -178,7 +185,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contact
 
-For any questions or issues, please contact on any if the provided social account.
+For any questions or issues, please contact on any of the provided social accounts.
 
 ## Laravel Sponsors
 
