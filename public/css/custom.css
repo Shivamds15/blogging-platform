@@ -163,6 +163,14 @@ body {
     border-radius: 0.25rem;
 }
 
+.img-fluid {
+    max-width: 100%;
+    height: 150px;
+    display: inline-block;
+    width: 150px;
+    object-fit: cover;
+}
+
 .btn-primary:hover {
     background-color: #0056b3;
     border-color: #004085;
@@ -231,6 +239,14 @@ body {
 
 #Pagination-Navpost nav > div:first-of-type{
     display: none;
+}
+
+#profile_picture{
+    background-color: #ededed;
+    width: 100%;
+    border-radius: 0 5px 5px 0;
+    height: auto;
+    padding: 0.6rem 1rem;
 }
 
 div.commbody {

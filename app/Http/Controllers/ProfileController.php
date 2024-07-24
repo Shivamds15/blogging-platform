@@ -11,14 +11,16 @@ class ProfileController extends Controller
 {
     public function show()
     {
+        $formConfig = config('formsfield.profileView');
         $user = Auth::user();
-        return view('profile', compact('user'));
+        return view('profile', compact('formConfig', 'user'));
     }
 
     public function edit()
     {
+        $formConfig = config('formsfield.profileEdit');
         $user = Auth::user();
-        return view('edit-profile', compact('user'));
+        return view('edit-profile', compact('formConfig', 'user'));
     }
 
     public function update(Request $request)

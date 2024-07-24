@@ -21,38 +21,28 @@
                                  style="max-width: 150px;">
                         </div>
 
-                        <div class="form-group mb-3">
-                            <label for="name" class="form-label">Name</label>
-                            <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', $user->name) }}" required>
-                            @error('name')
-                                <div class="invalid-feedback">
-                                    <strong>{{ $message }}</strong>
+                        @if($formConfig)
+                            @foreach($formConfig as $field => $attributes)
+                                <div class="form-group mb-3">
+                                    <label for="{{ $field }}" class="form-label">{{ $attributes['label'] }}</label>
+                                    <input id="{{ $field }}" 
+                                           type="{{ $attributes['type'] }}" 
+                                           class="form-control @error($field) is-invalid @enderror" 
+                                           name="{{ $field }}" 
+                                           value="{{ old($field, $user->$field) }}" 
+                                           {{ $attributes['required'] ? 'required' : '' }}>
+                                    @error($field)
+                                        <div class="invalid-feedback">
+                                            <strong>{{ $message }}</strong>
+                                        </div>
+                                    @enderror
                                 </div>
-                            @enderror
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email', $user->email) }}" required>
-                            @error('email')
-                                <div class="invalid-feedback">
-                                    <strong>{{ $message }}</strong>
-                                </div>
-                            @enderror
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label for="profile_picture" class="form-label">Profile Picture</label>
-                            <input id="profile_picture" style="background-color:#ededed;width:100%;border-radius: 0 5px 5px 0;;" type="file" @error('profile_picture') is-invalid @enderror" name="profile_picture">
-                            @error('profile_picture')
-                                <div class="invalid-feedback">
-                                    <strong>{{ $message }}</strong>
-                                </div>
-                            @enderror
-                        </div>
+                            @endforeach
+                        @else
+                            <p>No form configuration found.</p>
+                        @endif
 
                         <div class="form-group mb-0">
-                            
                             <button type="submit" class="btn btn-primary w-100">Update Profile</button>
                         </div>
                     </form>
