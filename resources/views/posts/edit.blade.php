@@ -3,8 +3,8 @@
 @section('title', 'Edit Post')
 
 @section('content')
-
 <div class="container">
+
     <div class="card shadow-sm rounded">
         <div class="card-header bg-primary text-white text-center">
             <h2>Edit Post</h2>
@@ -37,5 +37,4 @@
         </div>
     </div>
 </div>
-
 @endsection

@@ -2,11 +2,9 @@
 
 namespace App\Repositories;
 
-use App\Models\Post;
-
 interface PostRepositoryInterface
 {
-    public function all();
+    public function getPosts($userId = null, $showDeleted = false);
     public function find($id);
     public function create(array $data);
     public function update($id, array $data);
@@ -14,3 +12,4 @@ interface PostRepositoryInterface
     public function restore($id);
     public function forceDelete($id);
 }
+

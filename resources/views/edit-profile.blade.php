@@ -1,55 +1,51 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-sm rounded">
-                <div class="card-header bg-primary text-white text-center">
-                    <h4>Edit Profile</h4>
+<div class="edit-profile-container">
+    <div class="edit-profile-card">
+        <div class="edit-profile-header">
+            <h4>Edit Profile</h4>
+        </div>
+        <div class="edit-profile-body">
+            <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="edit-profile-form">
+                @csrf
+                @method('PUT')
+
+                <div class="edit-profile-image-container">
+                    <img id="profile-picture-preview" 
+                         src="{{ $user->profile_picture ? asset('storage/' . $user->profile_picture) : asset('images/default-profile.png') }}" 
+                         alt="{{ $user->name }}" 
+                         class="edit-profile-image">
                 </div>
-                <div class="card-body">
-                    <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        @method('PUT')
 
-                        <div class="text-center mb-4">
-                            <img id="profile-picture-preview" 
-                                 src="{{ $user->profile_picture ? asset('storage/' . $user->profile_picture) : asset('images/default-profile.png') }}" 
-                                 alt="{{ $user->name }}" 
-                                 class="img-fluid rounded-circle" 
-                                 style="max-width: 150px;">
-                        </div>
-
-                        @if($formConfig)
-                            @foreach($formConfig as $field => $attributes)
-                                <div class="form-group mb-3">
-                                    <label for="{{ $field }}" class="form-label">{{ $attributes['label'] }}</label>
-                                    <input id="{{ $field }}" 
-                                           type="{{ $attributes['type'] }}" 
-                                           class="form-control @error($field) is-invalid @enderror" 
-                                           name="{{ $field }}" 
-                                           value="{{ old($field, $user->$field) }}" 
-                                           {{ $attributes['required'] ? 'required' : '' }}>
-                                    @error($field)
-                                        <div class="invalid-feedback">
-                                            <strong>{{ $message }}</strong>
-                                        </div>
-                                    @enderror
+                @if($formConfig)
+                    @foreach($formConfig as $field => $attributes)
+                        <div class="edit-profile-form-group">
+                            <label for="{{ $field }}" class="edit-profile-label">{{ $attributes['label'] }}</label>
+                            <input id="{{ $field }}" 
+                                   type="{{ $attributes['type'] }}" 
+                                   class="edit-profile-input @error($field) is-invalid @enderror" 
+                                   name="{{ $field }}" 
+                                   value="{{ old($field, $user->$field) }}" 
+                                   {{ $attributes['required'] ? 'required' : '' }}>
+                            @error($field)
+                                <div class="invalid-feedback">
+                                    <strong>{{ $message }}</strong>
                                 </div>
-                            @endforeach
-                        @else
-                            <p>No form configuration found.</p>
-                        @endif
-
-                        <div class="form-group mb-0">
-                            <button type="submit" class="btn btn-primary w-100">Update Profile</button>
+                            @enderror
                         </div>
-                    </form>
-                    <button onclick="history.back()" class="btn btn-secondary w-100 mx-0">Back</button>
+                    @endforeach
+                @else
+                    <p class="no-config-message">No form configuration found.</p>
+                @endif
+
+                <div class="edit-profile-actions">
+                    <button type="submit" class="btn btn-update">Update Profile</button>
+                    <button type="button" onclick="history.back()" class="btn btn-back">Back</button>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>
+
 @endsection

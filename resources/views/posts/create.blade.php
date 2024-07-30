@@ -3,8 +3,8 @@
 @section('title', 'Create Post')
 
 @section('content')
-
 <div class="container">
+
     <div class="card shadow-sm rounded">
         <div class="card-header bg-primary text-white text-center">
             <h2>Create a New Post</h2>

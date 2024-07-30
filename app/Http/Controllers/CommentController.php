@@ -2,51 +2,47 @@
 
 namespace App\Http\Controllers;
 
-use App\Repositories\CommentRepositoryInterface;
+use App\Services\CommentService;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreCommentRequest;
 use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
-    protected $commentRepo;
+    protected $commentService;
 
-    public function __construct(CommentRepositoryInterface $commentRepo)
+    public function __construct(CommentService $commentService)
     {
-        $this->commentRepo = $commentRepo;
+        $this->commentService = $commentService;
     }
 
     public function index()
     {
-        $comments = $this->commentRepo->all();
+        $comments = $this->commentService->all();
         return response()->json($comments);
     }
 
-    public function store(Request $request)
+    public function store(StoreCommentRequest $request)
     {
-        $request->validate([
-            'body' => 'required|string|max:1000',
-            'post_id' => 'required|exists:posts,id',
-        ]);
-
-        $comment = $this->commentRepo->create([
-            'body' => $request->body,
-            'post_id' => $request->post_id,
-            'user_id' => Auth::id(),
-        ]);
+        $comment = $this->commentService->create($request);
 
         if ($request->is('api/*') || $request->expectsJson()) {
             return response()->json($comment, 201);
         }
+
         return redirect()->route('posts.show', $request->post_id);
     }
 
     public function destroy($id)
     {
-        $comment = $this->commentRepo->find($id);
-        $this->commentRepo->delete($id);
+        $comment = $this->commentService->find($id);
+
         if ($comment->user_id !== Auth::id()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
+
+        $this->commentService->delete($id);
+
         return response()->json(['message' => 'Comment deleted']);
     }
 }

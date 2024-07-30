@@ -35,3 +35,24 @@ $(document).on('click', '.delete-comment-btn', function() {
         }
     });
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    var openModalButton = document.getElementById('openCommentModal');
+    var commentModal = new bootstrap.Modal(document.getElementById('commentModal'));
+    
+    var modalElement = document.getElementById('commentModal');
+
+    openModalButton.addEventListener('click', function () {
+        commentModal.show();
+    });
+
+    document.querySelector('.cmmClose').addEventListener('click', function() {
+        commentModal.hide();
+    });
+    
+    modalElement.addEventListener('click', function (event) {
+        if (event.target === modalElement) {
+            commentModal.hide();
+        }
+    });
+});

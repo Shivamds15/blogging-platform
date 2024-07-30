@@ -16,43 +16,61 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('home') }}">Home</a>
-                </li>
+            <ul class="navbar-nav w-100 justify-content-end">
                 @auth
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('profile') }}">Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('posts.index') }}">Posts</a>
-                    </li>
-                    <li class="nav-item">
-                        <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="postsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Posts
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="postsDropdown">
+                        <a class="dropdown-item" href="{{ route('posts.index') }}">All Posts</a>
+                        <a class="dropdown-item" href="{{ route('posts.create') }}">Create Posts</a>
+                        <div class="dropdown-divider"></div>
+                        <h6 class="dropdown-header">My Posts</h6>
+                        <div class="dropdown-submenu">
+                            <a class="dropdown-item" href="{{ route('posts.index', ['user_posts' => 'true']) }}">Active Posts</a>
+                            <a class="dropdown-item" href="{{ route('posts.index', ['show_deleted' => 'true']) }}">Deleted Posts</a>
+                        </div>
+                    </div>
+                </li>
+                
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img src="{{ asset('storage/' . Auth::user()->profile_picture) }}" 
+                             alt="{{ Auth::user()->name }}" 
+                             class="rounded-circle" 
+                             style="width: 25px; height: 25px;"/> 
+                        {{ Auth::user()->name }}
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="{{ route('profile') }}">Profile View</a>
+                        <form action="{{ route('logout') }}" method="POST" class="dropdown-item p-0">
                             @csrf
-                            <button type="submit" class="btn btn-link nav-link">Logout</button>
+                            <a href="#" class="dropdown-item logout-link" onclick="event.preventDefault(); this.closest('form').submit();">Logout</a>
                         </form>
-                    </li>
+                    </div>
+                </li>
                 @else
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('login') }}">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('register') }}">Register</a>
-                    </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="guestDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-user-circle"></i> 
+                        Guest
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="guestDropdown">
+                        <a class="dropdown-item" href="{{ route('login') }}">Login</a>
+                        <a class="dropdown-item" href="{{ route('register') }}">Register</a>
+                    </div>
+                </li>
                 @endauth
             </ul>
         </div>
     </nav>
 
-    <div class="container">
-        @yield('content')
-    </div>
+    @yield('content')
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ asset('js/custom.js') }}"></script>
 </body>
 </html>

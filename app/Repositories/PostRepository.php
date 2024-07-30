@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Post;
+use Illuminate\Support\Facades\Auth;
 
 class PostRepository implements PostRepositoryInterface
 {
@@ -12,20 +13,29 @@ class PostRepository implements PostRepositoryInterface
     {
         $this->model = $model;
     }
-    
-    public function all()
+
+    public function getPosts($userId = null, $showDeleted = false)
     {
-        return $this->model->withTrashed()->newQuery(); 
+        $query = Post::query();
+        if ($showDeleted) {
+            $query->onlyTrashed();
+        } else {
+            $query->whereNull('deleted_at');
+        }
+        if ($userId) {
+            $query->where('user_id', $userId);
+        }
+        return $query->paginate(10);
     }
 
     public function find($id)
     {
-        return Post::withTrashed()->find($id);
+        return $this->model->withTrashed()->findOrFail($id);
     }
 
     public function create(array $data)
     {
-        return Post::create($data);
+        return $this->model->create($data);
     }
 
     public function update($id, array $data)
@@ -44,14 +54,14 @@ class PostRepository implements PostRepositoryInterface
 
     public function restore($id)
     {
-        $post = $this->find($id);
+        $post = $this->model->withTrashed()->findOrFail($id);
         $post->restore();
         return $post;
     }
 
     public function forceDelete($id)
     {
-        $post = $this->find($id);
+        $post = $this->model->withTrashed()->findOrFail($id);
         $post->forceDelete();
         return $post;
     }

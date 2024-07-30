@@ -2,17 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\ProfileRepositoryInterface;
 use Illuminate\Http\Request;
+use App\Http\Requests\UpdateProfileRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
 
 class ProfileController extends Controller
 {
+    protected $profileRepo;
+
+    public function __construct(ProfileRepositoryInterface $profileRepo)
+    {
+        $this->profileRepo = $profileRepo;
+    }
+
     public function show()
     {
         $formConfig = config('formsfield.profileView');
         $user = Auth::user();
+
         return view('profile', compact('formConfig', 'user'));
     }
 
@@ -20,40 +28,30 @@ class ProfileController extends Controller
     {
         $formConfig = config('formsfield.profileEdit');
         $user = Auth::user();
+
         return view('edit-profile', compact('formConfig', 'user'));
     }
 
-    public function update(Request $request)
+    public function update(UpdateProfileRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . Auth::id(),
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-        $user = Auth::user();
-        $user->name = $request->input('name');
-        $user->email = $request->input('email');
+
+        $data = $request->only(['name', 'email']);
+
         if ($request->hasFile('profile_picture')) {
-            if ($user->profile_picture) {
-                Storage::delete('public/' . $user->profile_picture);
-            }
-            $path = $request->file('profile_picture')->store('profiles', 'public');
-            $user->profile_picture = $path;
+            $data['profile_picture'] = $request->file('profile_picture');
         }
-        $user->save();
+
+        $this->profileRepo->updateUser(Auth::id(), $data);
+        
         return redirect()->route('profile');
     }
 
     public function destroy(Request $request)
     {
-        $user = Auth::user();
-        DB::transaction(function () use ($user) {
-            if ($user->profile_picture) {
-                Storage::delete('public/' . $user->profile_picture);
-            }
-            $user->delete();
-        });
+        $this->profileRepo->deleteUser(Auth::id());
         Auth::logout();
+        
         return redirect('/');
     }
 }
+
