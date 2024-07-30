@@ -1,57 +1,51 @@
-$(function() {
-    $('#password-toggle').on('click', function() {
+$(document).ready(function() {
+    $('#password-toggle').click(function() {
         var $passwordField = $('#password');
         var $passwordIcon = $('#password-icon');
         var isPassword = $passwordField.attr('type') === 'password';
         $passwordField.attr('type', isPassword ? 'text' : 'password');
         $passwordIcon.toggleClass('fa-eye fa-eye-slash');
     });
-});
 
-$(function() {
-    $('#profile_picture').on('change', function(e) {
-        const file = e.target.files[0];
-        let url = window.URL.createObjectURL(file);
-        $('#profile-picture-preview').attr('src', url);
-    });
-});
-
-$.ajaxSetup({
-    headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
-});
-
-$(document).on('click', '.delete-comment-btn', function() {
-    const commentId = $(this).data('id');
-    $.ajax({
-        url: `/comments/${commentId}`,
-        type: 'DELETE',
-        success: function(response) {
-            $(`#comment-${commentId}`).remove(); 
-        },
-        error: function(response) {
-            alert('Error deleting comment');
+    $('#profile_picture').change(function(e) {
+        var file = e.target.files[0];
+        if (file) {
+            var url = URL.createObjectURL(file);
+            $('#profile-picture-preview').attr('src', url);
         }
     });
-});
 
-document.addEventListener('DOMContentLoaded', function () {
-    var openModalButton = document.getElementById('openCommentModal');
-    var commentModal = new bootstrap.Modal(document.getElementById('commentModal'));
-    
-    var modalElement = document.getElementById('commentModal');
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
 
-    openModalButton.addEventListener('click', function () {
+    $(document).on('click', '.delete-comment-btn', function() {
+        var commentId = $(this).data('id');
+        $.ajax({
+            url: `/comments/${commentId}`,
+            type: 'DELETE',
+            success: function() {
+                $(`#comment-${commentId}`).remove();
+            },
+            error: function() {
+                alert('Error deleting comment');
+            }
+        });
+    });
+
+    var commentModal = new bootstrap.Modal($('#commentModal')[0]);
+    $('#openCommentModal').click(function() {
         commentModal.show();
     });
 
-    document.querySelector('.cmmClose').addEventListener('click', function() {
+    $('.cmmClose').click(function() {
         commentModal.hide();
     });
-    
-    modalElement.addEventListener('click', function (event) {
-        if (event.target === modalElement) {
+
+    $('#commentModal').click(function(event) {
+        if (event.target === this) {
             commentModal.hide();
         }
     });
