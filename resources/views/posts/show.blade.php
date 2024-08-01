@@ -4,7 +4,6 @@
 
 @section('content')
 <div class="container">
-
     <div class="card shadow-sm rounded mb-4">
         <div class="card-header bg-primary text-white">
             <h2 class="mb-0">{{ $post->title }}</h2>
@@ -12,7 +11,7 @@
         <div class="card-body">
             <p>{{ $post->body }}</p>
             @auth
-                @if ($post->user_id === Auth::id())
+                @if ($post->user_id === Auth::id() || Auth::user()->isAdmin())
                     <div class="d-flex justify-content-between">
                         <a href="{{ route('posts.edit', $post) }}" class="btn btn-primary">Edit</a>
                         <form action="{{ route('posts.destroy', $post) }}" method="POST" style="display: inline;">
@@ -31,7 +30,7 @@
             <h3 class="mb-0">Comments</h3>
             <button id="openCommentModal" class="btn btn-primary">Add Comment</button>
         </div>
-        <div class="card-body card-body-comments"> <!-- Updated class here -->
+        <div class="card-body card-body-comments">
             @foreach ($post->comments as $comment)
                 <div id="comment-{{ $comment->id }}" class="border-bottom mb-3 pb-2 commbody">
                     <div class="commLeft">
@@ -39,7 +38,7 @@
                         <p class="text-muted"><small>by : {{ $comment->user->name }}</small></p>
                     </div>
                     @auth
-                        @if($comment->user_id === Auth::id())
+                        @if($comment->user_id === Auth::id() || Auth::user()->isAdmin())
                             <div class="commright">
                                 <button class="delete-comment-btn btn btn-primary btn-danger btn-sm" data-id="{{ $comment->id }}">Delete</button>
                             </div>
@@ -82,5 +81,3 @@
     </div>
 </div>
 @endsection
-
-   

@@ -1,8 +1,7 @@
 <?php
-
 namespace App\Services;
-use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Support\Facades\Auth;
 use App\Repositories\PostRepositoryInterface;
 
 class PostService
@@ -26,9 +25,9 @@ class PostService
 
     public function create($request)
     {
-          return $this->postRepo->create([
+        return $this->postRepo->create([
             'title' => $request->title,
-            'body' =>  $request->body,
+            'body' => $request->body,
             'user_id' => Auth::id(),
         ]);
     }
@@ -51,5 +50,11 @@ class PostService
     public function forceDelete($id)
     {
         return $this->postRepo->forceDelete($id);
+    }
+
+    public function isAuthorized($postId)
+    {
+        $post = $this->postRepo->find($postId);
+        return Auth::user()->isAdmin() || $post->user_id === Auth::id();
     }
 }

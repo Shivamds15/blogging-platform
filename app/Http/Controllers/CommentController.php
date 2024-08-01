@@ -37,12 +37,11 @@ class CommentController extends Controller
     {
         $comment = $this->commentService->find($id);
 
-        if ($comment->user_id !== Auth::id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+        if (Auth::user()->isAdmin() || Auth::id() === $comment->user_id) {
+            $this->commentService->delete($id);
+            return response()->json(['message' => 'Comment deleted']);
         }
-
-        $this->commentService->delete($id);
-
-        return response()->json(['message' => 'Comment deleted']);
+    
+        return response()->json(['message' => 'Unauthorized'], 403);
     }
 }

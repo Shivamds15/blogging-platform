@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        return view('home');
+        $user = Auth::user();
+        $isAdmin = $user ? $user->isAdmin() : false;
+
+        return view('home', ['isAdmin' => $isAdmin]);
     }
 }

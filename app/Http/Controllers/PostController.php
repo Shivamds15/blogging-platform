@@ -18,33 +18,50 @@ class PostController extends Controller
 
     public function index(Request $request)
     {
-        $userId = $request->has('user_posts') && Auth::check() ? Auth::id() : null;
+        $userId = Auth::check() ? Auth::id() : null;
         $showDeleted = $request->has('show_deleted') && $request->input('show_deleted') === 'true';
-
-        $posts = $this->postService->get($userId, $showDeleted);
+    
+        if (Auth::user()->isAdmin()) {
+            if ($request->has('user_posts')) {
+                $posts = $this->postService->get($userId, false);
+            } elseif ($showDeleted) {
+                $posts = $this->postService->get(null, true);
+            } else {
+                $posts = $this->postService->get(null, false);
+            }
+        } else {
+            if ($request->has('user_posts')) {
+                $posts = $this->postService->get($userId, false);
+            } elseif ($showDeleted) {
+                $posts = $this->postService->get($userId, true);
+            } else {
+                $posts = $this->postService->get(null, false);
+            }
+        }
 
         if ($request->is('api/*') || $request->expectsJson()) {
             return response()->json($posts);
         }
-
+    
         return view('posts.index', ['posts' => $posts, 'showDeleted' => $showDeleted]);
     }
+    
 
-    public function show(Request $request, $id)
+    public function show($id)
     {
         $post = $this->postService->find($id);
 
-        if ($request->is('api/*') || $request->expectsJson()) {
+        if (request()->is('api/*') || request()->expectsJson()) {
             return response()->json($post);
         }
-
-        return view('posts.show', ['post' => $post]);
+    
+        return view('posts.show', compact('post'));
+    
     }
-
+    
     public function create()
     {
         $formConfig = config('formsfield.postCreate');
-        
         return view('posts.create', compact('formConfig'));
     }
 
@@ -64,11 +81,15 @@ class PostController extends Controller
         $post = $this->postService->find($id);
         $formConfig = config('formsfield.postEdit');
 
-        if ($request->is('api/*') || $request->expectsJson()) {
-            return response()->json($post);
-        }
+        if (Auth::user()->isAdmin() || $post->user_id === Auth::id()) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json($post);
+            }
 
-        return view('posts.edit', compact('post', 'formConfig'));
+            return view('posts.edit', compact('post', 'formConfig'));
+        } else {
+            abort(403, 'Unauthorized action.');
+        }
     }
 
     public function update(UpdatePostRequest $request, $id)
@@ -95,23 +116,31 @@ class PostController extends Controller
 
     public function restore(Request $request, $id)
     {
-        $post = $this->postService->restore($id);
+        if (Auth::user()->isAdmin() || $request->user()->posts()->withTrashed()->where('id', $id)->exists()) {
+            $post = $this->postService->restore($id);
 
-        if ($request->is('api/*') || $request->expectsJson()) {
-            return response()->json($post);
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json($post);
+            }
+
+            return redirect()->route('posts.index', ['show_deleted' => 'true']);
+        } else {
+            abort(403, 'Unauthorized action.');
         }
-
-        return redirect()->route('posts.index', ['show_deleted' => 'true']);
     }
 
     public function forceDelete(Request $request, $id)
     {
-        $post = $this->postService->forceDelete($id);
+        if (Auth::user()->isAdmin() || $request->user()->posts()->withTrashed()->where('id', $id)->exists()) {
+            $post = $this->postService->forceDelete($id);
 
-        if ($request->is('api/*') || $request->expectsJson()) {
-            return response()->json($post);
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json($post);
+            }
+
+            return redirect()->route('posts.index', ['show_deleted' => 'true']);
+        } else {
+            abort(403, 'Unauthorized action.');
         }
-
-        return redirect()->route('posts.index', ['show_deleted' => 'true']);
     }
 }
