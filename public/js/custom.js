@@ -1,55 +1,74 @@
-$(document).ready(function() {
-    $('#password-toggle').click(function() {
-        var $passwordField = $('#password');
-        var $passwordIcon = $('#password-icon');
-        var isPassword = $passwordField.attr('type') === 'password';
-        $passwordField.attr('type', isPassword ? 'text' : 'password');
-        $passwordIcon.toggleClass('fa-eye fa-eye-slash');
-    });
+$(document).ready(function () {
+  let table = new DataTable("#myTable");
 
-    $('#profile_picture').change(function(e) {
-        var file = e.target.files[0];
-        if (file) {
-            var url = URL.createObjectURL(file);
-            $('#profile-picture-preview').attr('src', url);
-        }
-    });
+  $("#password-toggle").click(function () {
+    let $passwordField = $("#password");
+    let $passwordIcon = $("#password-icon");
+    let isPassword = $passwordField.attr("type") === "password";
+    $passwordField.attr("type", isPassword ? "text" : "password");
+    $passwordIcon.toggleClass("fa-eye fa-eye-slash");
+  });
 
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
+  $("#profile_picture").change(function (e) {
+    let file = e.target.files[0];
+    if (file)
+      $("#profile-picture-preview").attr("src", URL.createObjectURL(file));
+  });
 
-    $(document).on('click', '.delete-comment-btn', function() {
-        var commentId = $(this).data('id');
-        $.ajax({
-            url: `/comments/${commentId}`,
-            type: 'DELETE',
-            success: function() {
-                $(`#comment-${commentId}`).remove();
-            },
-            error: function() {
-                alert('Error deleting comment');
-            }
-        });
-    });
+  $.ajaxSetup({
+    headers: { "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content") },
+  });
 
-    var commentModal = new bootstrap.Modal($('#commentModal')[0]);
-    $('#openCommentModal').click(function() {
-        commentModal.show();
+  $(document).on("click", ".delete-comment-btn", function () {
+    let commentId = $(this).data("id");
+    $.ajax({
+      url: `/comments/${commentId}`,
+      type: "DELETE",
+      success: () => $(`#comment-${commentId}`).remove(),
+      error: () => alert("Error deleting comment"),
     });
+  });
 
-    $('.cmmClose').click(function() {
-        commentModal.hide();
-    });
+  let commentModal = new bootstrap.Modal($("#commentModal")[0]);
+  $("#openCommentModal").click(() => commentModal.show());
+  $(".cmmClose, #commentModal").click((event) => {
+    if (event.target === this || event.target.classList.contains("cmmClose"))
+      commentModal.hide();
+  });
+});
 
-    $('#commentModal').click(function(event) {
-        if (event.target === this) {
-            commentModal.hide();
-        }
+const searchInput = document.getElementById('sidebar-search');
+const sidebarItems = document.querySelectorAll('.sideSearch');
+const sidebar = document.querySelector('.sidebar');
+
+let isSidebarClosed = false;
+
+searchInput.addEventListener('input', () => {
+    const searchTerm = searchInput.value.toLowerCase();
+    sidebarItems.forEach(item => {
+        item.style.display = item.querySelector('.content').textContent.toLowerCase().includes(searchTerm) ? '' : 'none';
     });
 });
 
+sidebar.addEventListener('mouseover', () => {
+    isSidebarClosed = false;
+    setTimeout(() => {
+        if (sidebar.offsetWidth > 80) searchInput.focus();
+    }, 100);
+});
 
-let table = new DataTable('#myTable');
+sidebar.addEventListener('mouseout', () => {
+    isSidebarClosed = true;
+    setTimeout(() => {
+        if (isSidebarClosed) {
+            searchInput.blur();
+            searchInput.value = '';
+            sidebarItems.forEach(item => item.style.display = '');
+        }
+    }, 100);
+});
+
+document.addEventListener('mouseover', (event) => {
+    if (!sidebar.contains(event.target)) isSidebarClosed = true;
+});
+

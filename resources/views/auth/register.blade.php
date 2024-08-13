@@ -66,7 +66,7 @@
                             </div>
 
                             <div class="text-center mt-3">
-                                <a href="{{ route('login') }}" class="text-muted">{{ __('Already have an account? Login') }}</a>
+                                <a href="{{ route('login') }}" class="text-muted">Already have an account? <span style="color: #007bff">Login</span></a>
                             </div>
                         </form>
                     </div>

@@ -2,10 +2,7 @@
 
 @section('content')
 <div class="profile-container">
-    <div class="profile-card">
-        <div class="profile-header">
-            <h4>Profile Overview</h4>
-        </div>
+    <div class="profile-card shadow-lg">
         <div class="profile-body">
             <div class="profile-image-container">
                 <img src="{{ $user->profile_picture ? asset('storage/' . $user->profile_picture) : asset('images/default-profile.png') }}" 
@@ -23,7 +20,7 @@
             @endforeach
 
             <div class="profile-actions">
-                <a href="{{ route('profile.edit') }}" class="btn btn-edit">Edit Profile</a>
+                <a href="{{ route('profile.edit') }}" class="btn btn-edit">Edit</a>
                 <form action="{{ route('profile.delete') }}" method="POST" class="delete-form">
                     @csrf
                     @method('DELETE')

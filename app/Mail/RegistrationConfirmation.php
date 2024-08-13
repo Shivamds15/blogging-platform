@@ -7,7 +7,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
 class RegistrationConfirmation extends Mailable
-{
+{ 
     use Queueable, SerializesModels;
 
     public $user;

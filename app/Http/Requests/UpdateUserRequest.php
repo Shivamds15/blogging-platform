@@ -8,12 +8,12 @@ class UpdateUserRequest extends FormRequest
 {
     public function authorize()
     {
-        return true; // Set to false if you want to add authorization logic
+        return true;  
     }
 
     public function rules()
     {
-        $userId = $this->route('user'); // Get user ID from the route
+        $userId = $this->route('user'); 
 
         return [
             'name' => 'required|string|max:255',

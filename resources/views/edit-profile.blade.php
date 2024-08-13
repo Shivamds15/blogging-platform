@@ -2,10 +2,7 @@
 
 @section('content')
 <div class="edit-profile-container">
-    <div class="edit-profile-card">
-        <div class="edit-profile-header">
-            <h4>Edit Profile</h4>
-        </div>
+    <div class="edit-profile-card shadow-lg">
         <div class="edit-profile-body">
             <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="edit-profile-form">
                 @csrf
@@ -21,7 +18,11 @@
                 @if($formConfig)
                     @foreach($formConfig as $field => $attributes)
                         <div class="edit-profile-form-group">
-                            <label for="{{ $field }}" class="edit-profile-label">{{ $attributes['label'] }}</label>
+                            <label for="{{ $field }}" class="edit-profile-label">{{ $attributes['label'] }}
+                                @if(isset($attributes['required']) && $attributes['required'])
+                                    <span class="text-danger">*</span>
+                                @endif
+                            </label>
                             <input id="{{ $field }}" 
                                    type="{{ $attributes['type'] }}" 
                                    class="edit-profile-input @error($field) is-invalid @enderror" 
@@ -41,7 +42,7 @@
 
                 <div class="edit-profile-actions">
                     <button type="submit" class="btn btn-update">Update Profile</button>
-                    <button type="button" onclick="history.back()" class="btn btn-back">Back</button>
+                    {{-- <button type="button" onclick="history.back()" class="btn btn-back">Back</button> --}}
                 </div>
             </form>
         </div>

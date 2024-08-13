@@ -58,8 +58,8 @@
                             </div>
 
                             <div class="text-center mt-3">
-                                <a href="{{ route('register') }}" class="text-muted">{{ __('Do not have an account? Register') }}</a></br>
-                                    <a href="{{ route('password.request') }}" class="text-muted">{{ __('Forgot Password? Reset') }}</a>
+                                <a href="{{ route('register') }}" class="text-muted">Do not have an account? <span style="color: #007bff">Register</span></a></br>
+                                    <span href="{{ route('password.request') }}" class="text-muted">Forgot Password? <span style="color: #007bff">Reset</span></a>
                             </div>
 
                         </form>

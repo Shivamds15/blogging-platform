@@ -35,24 +35,26 @@ return [
         'title' => [
             'label' => 'Title',
             'type' => 'text',
+            'required' => true,
             'rules' => 'required|string|max:255',
         ],
         'body' => [
             'label' => 'Body',
             'type' => 'textarea',
-            'rules' => 'required|string',
+            'rules' => 'string',
         ],
     ],
     'postEdit' => [
         'title' => [
             'label' => 'Title',
             'type' => 'text',
-            'rules' => 'required|string|max:255',
+            'required' => true,
+            'rules' => 'string|max:255',
         ],
         'body' => [
             'label' => 'Body',
             'type' => 'textarea',
-            'rules' => 'required|string',
+            'rules' => 'string',
         ],
     ],
 ];

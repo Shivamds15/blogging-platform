@@ -73,7 +73,12 @@ class PostController extends Controller
             return response()->json($post, 201);
         }
 
-        return redirect()->route('posts.index', ['user_posts' => 'true']);
+        $isAdmin = auth()->user()->isAdmin();
+        if ($isAdmin) {
+            return redirect()->route('posts.index');
+        } else {
+            return redirect()->route('posts.index', ['user_posts' => 'true']);
+        }
     }
 
     public function edit(Request $request, $id)
@@ -100,7 +105,12 @@ class PostController extends Controller
             return response()->json($post);
         }
 
-        return redirect()->route('posts.index', ['user_posts' => 'true']);
+        $isAdmin = auth()->user()->isAdmin();
+        if ($isAdmin) {
+            return redirect()->route('posts.index');
+        } else {
+            return redirect()->route('posts.index', ['user_posts' => 'true']);
+        }
     }
 
     public function destroy(Request $request, $id)
@@ -110,8 +120,12 @@ class PostController extends Controller
         if ($request->is('api/*') || $request->expectsJson()) {
             return response()->json(['message' => 'Post deleted successfully']);
         }
-
-        return redirect()->route('posts.index', ['user_posts' => 'true']);
+        $isAdmin = auth()->user()->isAdmin();
+        if ($isAdmin) {
+            return redirect()->route('posts.index');
+        } else {
+            return redirect()->route('posts.index', ['user_posts' => 'true']);
+        }
     }
 
     public function restore(Request $request, $id)

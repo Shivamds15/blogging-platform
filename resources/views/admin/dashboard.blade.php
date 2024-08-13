@@ -1,175 +1,135 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-4">
-    <h1 class="mb-4 text-center" style="background-color: #007bff;color: #c0deff;border-radius: 100%;">Dashboard</h1>
-    
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card border-info mb-4">
-                <div class="card-header bg-info text-white">
-                    <h5 class="card-title mb-0">Total Posts</h5>
+    <div class="container dashpage p-4" style="height: 100vh; display: flex; flex-direction: column;">
+        <div class="row mb-1" style="margin-top:3.5em">
+            @foreach([
+                ['Total Posts', $totalPosts, 'info'],
+                ['Deleted Posts', $softDeletedPosts, 'warning'],
+                ['Total Comments', $totalComments, 'success'],
+                ['Deleted Users', $softDeletedUsers, 'danger']
+            ] as [$title, $count, $color])
+                <div class="col-md-3 mb-3">
+                    <div class="card metrics-card border-{{ $color }} bg-{{ $color }}">
+                        <div class="card-content text-{{ $color }}">
+                            <div class="card-title">{{ $title }}</div>
+                            <div class="card-value">{{ $count }}</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body text-center">
-                    <h3 class="card-text">{{ $totalPosts }}</h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-warning mb-4">
-                <div class="card-header bg-warning text-white">
-                    <h5 class="card-title mb-0">Soft-Deleted Posts</h5>
-                </div>
-                <div class="card-body text-center">
-                    <h3 class="card-text">{{ $softDeletedPosts }}</h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-success mb-4">
-                <div class="card-header bg-success text-white">
-                    <h5 class="card-title mb-0">Total Comments</h5>
-                </div>
-                <div class="card-body text-center">
-                    <h3 class="card-text">{{ $totalComments }}</h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-danger mb-4">
-                <div class="card-header bg-danger text-white">
-                    <h5 class="card-title mb-0">Soft-Deleted Users</h5>
-                </div>
-                <div class="card-body text-center">
-                    <h3 class="card-text">{{ $softDeletedUsers }}</h3>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="card-title mb-0">Posts Analytics</h5>
-                </div>
-                <div class="card-body">
-                    <div id="postsChart" style="height: 400px; width: 100%;"></div>
-                </div>
-            </div>
+            @endforeach
         </div>
 
-        <div class="col-md-6">
-            <div class="card mb-4">
-                <div class="card-header bg-secondary text-white">
-                    <h5 class="card-title mb-0">Users Analytics</h5>
+        <div class="row flex-fill">
+            <div class="col-md-6 d-flex flex-column">
+                <div class="flex-fill mb-3">
+                    <div class="d-flex align-items-center justify-content-center h-100">
+                        <div id="usersChart" style="width: 100%; height: 100%;"></div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div id="usersChart" style="height: 400px; width: 100%;"></div>
+                <div class="flex-fill">
+                    <div class="d-flex align-items-center justify-content-center h-100">
+                        <div id="postsChart" style=""></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 d-flex flex-column">
+                <div class="flex-fill">
+                    <div class="d-flex align-items-center justify-content-center h-100">
+                        <div id="commentsChart" style="width: 100%; height: 100%;"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card mb-4">
-                <div class="card-header bg-success text-white">
-                    <h5 class="card-title mb-0">Comments Analytics</h5>
-                </div>
-                <div class="card-body">
-                    <div id="commentsChart" style="height: 400px; width: 100%;"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const chartsData = {
+                posts: {!! json_encode($postsChartData) !!},
+                users: {!! json_encode($usersChartData) !!},
+                comments: {!! json_encode($commentsChartData) !!}
+            };
 
-<script src="https://code.highcharts.com/highcharts.js"></script>
+            function createChart(container, options) {
+                return Highcharts.chart(container, {
+                    ...options,
+                    chart: {
+                        ...options.chart,
+                        events: {
+                            redraw: function () {
+                                this.reflow();
+                            }
+                        }
+                    }
+                });
+            }
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const postsData = {
-            categories: {!! json_encode($postsChartData['categories']) !!},
-            data: {!! json_encode($postsChartData['data']) !!}
-        };
+            const postsChart = createChart('postsChart', {
+                chart: { type: 'bar' },
+                title: { text: 'Posts Created per Month' },
+                xAxis: {
+                    categories: chartsData.posts.categories,
+                    title: { text: 'Month' }
+                },
+                yAxis: {
+                    min: 0,
+                    title: { text: 'Number of Posts' }
+                },
+                series: [{
+                    name: 'Posts Created',
+                    data: chartsData.posts.data
+                }]
+            });
 
-        const usersData = {
-            categories: {!! json_encode($usersChartData['categories']) !!},
-            data: {!! json_encode($usersChartData['data']) !!}
-        };
+            const usersChart = createChart('usersChart', {
+                chart: { type: 'pie' },
+                title: { text: 'Users by Role' },
+                series: [{
+                    name: 'Users Count',
+                    colorByPoint: true,
+                    data: chartsData.users.categories.map((category, index) => ({
+                        name: category,
+                        y: chartsData.users.data[index]
+                    }))
+                }]
+            });
 
-        const commentsData = {
-            categories: {!! json_encode($commentsChartData['categories']) !!},
-            data: {!! json_encode($commentsChartData['data']) !!}
-        };
+            const commentsCategories = chartsData.comments.categories;
+            const commentsData = chartsData.comments.data;
 
-        Highcharts.chart('postsChart', {
-            chart: {
-                type: 'column'
-            },
-            title: {
-                text: 'Posts Created per Month'
-            },
-            xAxis: {
-                categories: postsData.categories,
-                title: {
-                    text: 'Month'
-                }
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Number of Posts'
-                }
-            },
-            series: [{
-                name: 'Posts Created',
-                data: postsData.data
-            }]
+            const top10Comments = commentsCategories
+                .map((category, index) => ({ category, data: commentsData[index] }))
+                .sort((a, b) => b.data - a.data)
+                .slice(0, 10);
+
+            const top10Categories = top10Comments.map(item => item.category);
+            const top10Data = top10Comments.map(item => item.data);
+
+            const commentsChart = createChart('commentsChart', {
+                chart: { type: 'bar' },
+                title: { text: 'Top 10 Users by Comments' },
+                xAxis: {
+                    categories: top10Categories,
+                    title: { text: 'User' }
+                },
+                yAxis: {
+                    min: 0,
+                    title: { text: 'Number of Comments' }
+                },
+                series: [{
+                    name: 'Comments',
+                    data: top10Data
+                }]
+            });
+
+            window.addEventListener('resize', () => {
+                postsChart.reflow();
+                usersChart.reflow();
+                commentsChart.reflow();
+            });
         });
-
-        Highcharts.chart('usersChart', {
-            chart: {
-                type: 'pie'
-            },
-            title: {
-                text: 'Users by Role'
-            },
-            series: [{
-                name: 'Users Count',
-                colorByPoint: true,
-                data: usersData.categories.map((category, index) => ({
-                    name: category,
-                    y: usersData.data[index]
-                }))
-            }]
-        });
-
-        Highcharts.chart('commentsChart', {
-            chart: {
-                type: 'bar'
-            },
-            title: {
-                text: 'Comments per User'
-            },
-            xAxis: {
-                categories: commentsData.categories,
-                title: {
-                    text: 'User'
-                }
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Number of Comments'
-                }
-            },
-            series: [{
-                name: 'Comments',
-                data: commentsData.data
-            }]
-        });
-    });
-</script>
+    </script>
 @endsection

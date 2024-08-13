@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->uuid('user_id');
             $table->string('title');
-            $table->text('body');
+            // $table->text('body')->default('No content')->change();
+            $table->text('body')->nullable();
             $table->softDeletes();
             $table->timestamps();
     

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Mail\RegistrationConfirmation;
 use App\Models\User;
+use App\Jobs\SendEmailJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -29,7 +30,7 @@ class RegisterController extends Controller
         $user = $this->create($request->all());
         Auth::login($user);
 
-        Mail::to($user->email)->send(new RegistrationConfirmation($user, $password));
+        SendEmailJob::dispatch($user, $password);
 
         return redirect()->route('home');
     }

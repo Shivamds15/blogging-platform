@@ -49,11 +49,12 @@ class User extends Authenticatable
         });
 
         static::deleting(function ($user) {
-            $user->posts()->each(function ($post) {
-                $post->comments()->delete(); 
-                $post->delete(); 
-            });
-            $user->comments()->delete(); 
+            // $user->posts()->withTrashed()->each(function ($post) {
+            //     $post->comments()->forceDelete();  
+            //     $post->forceDelete();                            
+            // });
+            $user->posts()->withTrashed()->forceDelete();
+            $user->comments()->forceDelete();
         });
     }
 
